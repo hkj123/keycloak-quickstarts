@@ -21,8 +21,13 @@ package org.keycloak.quickstart.springboot.web;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.quickstart.springboot.MyApplication;
 import org.keycloak.quickstart.springboot.security.Identity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +38,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author <a href="mailto:psilva@redhat.com">Pedro Igor</a>
  */
 @Controller
+@RequestMapping("")
+@Api("ApplicationController")
 public class ApplicationController {
+
+    private static final Logger log = LoggerFactory.getLogger(ApplicationController.class);
 
     @Autowired
     private HttpServletRequest request;
@@ -41,6 +50,7 @@ public class ApplicationController {
     @RequestMapping(value = "/protected", method = RequestMethod.GET)
     public String handleProtected(Model model) {
         configCommonAttributes(model);
+        log.info(model.toString());
         return "protected";
     }
 
@@ -63,6 +73,7 @@ public class ApplicationController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
+    @ApiOperation(value = "登录", notes = "登录")
     public String handleHome(Model model) throws ServletException {
         configCommonAttributes(model);
         return "home";
