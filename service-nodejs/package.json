@@ -1,20 +1,21 @@
 {
-  "name" : "service-nodejs",
-  "version" : "0.0.1",
-  "scripts" : {
-    "start" : "node app.js",
-    "install" : "nsp check"
+  "name": "service-nodejs",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node app.js",
+    "install": "nsp check"
   },
-  "dependencies" : {
-    "keycloak-connect": "keycloak/keycloak-nodejs-connect",
+  "dependencies": {
     "body-parser": "^1.13.3",
+    "cors": "^2.8.1",
     "express": "^4.13.3",
     "express-session": "^1.14.2",
-    "cors": "^2.8.1"
+    "keycloak-connect": "github:keycloak/keycloak-nodejs-connect",
+    "hogan-express": "^0.5.2"
   },
   "devDependencies": {
     "keycloak-request-token": "^0.1.0",
-    "keycloak-client-registration":"^0.1.0",
+    "keycloak-client-registration": "^0.1.0",
     "coveralls": "^2.11.9",
     "eslint": "^3.3.1",
     "eslint-config-semistandard": "^7.0.0-beta.0",

@@ -19,9 +19,22 @@ var express = require('express');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var Keycloak = require('keycloak-connect');
+var hogan = require('hogan-express');
 var cors = require('cors');
 
 var app = express();
+
+var server = app.listen(3000, function () {
+  var host = server.address().address;
+  var port = server.address().port;
+  console.log('Example app listening at http://%s:%s', host, port);
+});
+
+// Register '.mustache' extension with The Mustache Express
+app.set('view engine', 'html');
+app.set('views', require('path').join(__dirname, '/view'));
+app.engine('html', hogan);
+
 app.use(bodyParser.json());
 
 // Enable CORS support
@@ -54,22 +67,24 @@ app.use(keycloak.middleware({
   admin: '/'
 }));
 
+app.get('/', function (req, res) {
+  res.render('index');
+});
+
 app.get('/service/public', function (req, res) {
-  res.json({message: 'public'});
+  res.render('index', {
+    result: 'message: public',
+    event: '1. Authentication\n2. Login'
+  });
 });
 
-app.get('/service/secured', keycloak.protect('realm:user'), function (req, res) {
-  res.json({message: 'secured'});
-});
-
-app.get('/service/admin', keycloak.protect('realm:admin'), function (req, res) {
-  res.json({message: 'admin'});
+app.get('/login', keycloak.protect(), function (req, res) {
+  res.render('index', {
+    result: JSON.stringify(JSON.parse(req.session['keycloak-token']), null, 4),
+    event: '1. Authentication\n2. Login'
+  });
 });
 
 app.use('*', function (req, res) {
   res.send('Not found!');
-});
-
-app.listen(3000, function () {
-  console.log('Started at port 3000');
 });
