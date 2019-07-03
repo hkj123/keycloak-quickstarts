@@ -20,7 +20,9 @@ package org.keycloak.quickstart.springboot.web;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.ClientResource;
+import org.keycloak.admin.client.resource.ClientTemplatesResource;
 import org.keycloak.representations.idm.ClientRepresentation;
+import org.keycloak.representations.idm.ClientTemplateRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.authorization.PolicyEnforcementMode;
@@ -49,7 +51,7 @@ public class KeycloakClients {
         //get clients
 //        get(keycloak);
         //add clients
-        add(keycloak);
+        addClientResource(keycloak);
     }
 
     public static Keycloak token() {
@@ -63,34 +65,15 @@ public class KeycloakClients {
         return keycloak;
     }
 
-    public static void add(Keycloak keycloak) {
-        ClientRepresentation clientRepresentation = new ClientRepresentation();
-        //basic information
-        clientRepresentation.setClientId("test-client");
-        clientRepresentation.setEnabled(false);
-        clientRepresentation.setBaseUrl("http://localhost:8180");
-        clientRepresentation.setAdminUrl("http://localhost:8180");
-        clientRepresentation.setBearerOnly(false);
-        List<String> redirectUri = new ArrayList<String>();
-        redirectUri.add("http://localhost:8180/*");
-        clientRepresentation.setRedirectUris(redirectUri);
-        clientRepresentation.setSecret("secret");
-        clientRepresentation.setAuthorizationServicesEnabled(false);
-        ResourceServerRepresentation resourceServerRepresentation = new ResourceServerRepresentation();
-        resourceServerRepresentation.setAllowRemoteResourceManagement(false);
-        resourceServerRepresentation.setPolicyEnforcementMode(PolicyEnforcementMode.ENFORCING);
-        //resources
-        List<ResourceRepresentation> resources = new ArrayList<ResourceRepresentation>();
+    public static void addClientResource(Keycloak keycloak) {
         ResourceRepresentation resourceRepresentation = new ResourceRepresentation();
-        resourceRepresentation.setName("Test Resource");
-        resourceRepresentation.setOwnerManagedAccess(false);
-        Set<String> set = new HashSet<String>();
-        set.add("/protected/login");
-        resourceRepresentation.setUris(set);
-        resources.add(resourceRepresentation);
-        clientRepresentation.setAuthorizationSettings(resourceServerRepresentation);
+        resourceRepresentation.setName("branch");
+        resourceRepresentation.setType("http://qloudpep.shdpoc.service.sd/v1/qloud/sandbox/branch");
+        resourceRepresentation.setUri("/v1/qloud/sandbox/branch/");
+        resourceRepresentation.setOwner("alice");
+        resourceRepresentation.setOwnerManagedAccess(true);
         Response response = keycloak.realm("spring-boot-quickstart").clients()
-                .create(clientRepresentation);
+                .get("a79df12b-6aa1-46de-9d28-65813475cfd3").authorization().resources().create(resourceRepresentation);
         System.out.println("****" + response.getStatus());
     }
 
