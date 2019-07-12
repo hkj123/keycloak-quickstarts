@@ -10,7 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>keycloak-springboot-example</artifactId>
+    <artifactId>app-authz-springboot</artifactId>
     <name>Spring Boot Web Keycloak Authorization Services Sample</name>
     <description>Spring Boot Web Keycloak Example using Authorization Services</description>
 
@@ -19,12 +19,15 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <springboot-version>2.0.3.RELEASE</springboot-version>
-        <springfox.version>2.9.2</springfox.version>
-        <spring-boot-starter-security.version>1.4.2.RELEASE</spring-boot-starter-security.version>
     </properties>
 
     <dependencies>
         <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -35,31 +38,23 @@
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.2</version>
+        </dependency>
 
+        <!-- Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-admin-client</artifactId>
-            <version>3.2.1.Final</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-client -->
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jackson2-provider</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>yasson</artifactId>
+            <artifactId>keycloak-test-helper</artifactId>
+            <version>${version.keycloak}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
@@ -80,30 +75,9 @@
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.swagger</groupId>
-                    <artifactId>swagger-models</artifactId>
-                    <!--旧版本的swagger报错 所以不用这个依赖 java.lang.NumberFormatException: For input string: ""-->
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/io.swagger/swagger-models -->
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-models</artifactId>
-            <version>1.5.22</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${springfox.version}</version>
+            <groupId>org.eclipse</groupId>
+            <artifactId>yasson</artifactId>
         </dependency>
     </dependencies>
 
@@ -116,6 +90,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.keycloak.bom</groupId>
+                <artifactId>keycloak-adapter-bom</artifactId>
+                <version>${version.keycloak}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -124,18 +105,16 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>org.keycloak.quickstart.springboot.MyApplication</mainClass>
-                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
                     <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
+                        <id>enforce-quickstart-realm-file-exist</id>
+                        <phase>validate</phase>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 
